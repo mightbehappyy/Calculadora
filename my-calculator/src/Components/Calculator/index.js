@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Botao from "../../Components/Botao";
-import Screen from "../../Components/Screen";
+import Botao from "../Botao";
+import Screen from "../Screen";
 import "./style.css";
 
 export default function Calculator() {
@@ -8,8 +8,8 @@ export default function Calculator() {
   const [prevValue, setPrevValue] = useState(0);
   const [operator, setOperator] = useState("");
   const [isOperatorClicked, setIsOperatorClicked] = useState(false);
-  const [saved, setSaved] = useState(0);
-  const [isSaved, setIsSaved] = useState("");
+  const [savedNumber, setSavedNumber] = useState(0);
+  const [savedType, setSavedType] = useState("");
 
   const buttonValues = [
     7,
@@ -37,17 +37,21 @@ export default function Calculator() {
   ];
 
   const updateDisplayValue = (newValue) => {
-    if (newValue === ".") {
-      if (!value.includes(".")) {
-        setValue(value + ".");
-      }
-    } else if (isOperatorClicked) {
-      setValue(newValue.toString());
-      setIsOperatorClicked(false);
+    if (["MR", "MC", "M+", "M-"].includes(newValue)) {
+      return null;
     } else {
-      setValue(
-        value === "0" ? newValue.toString() : value + newValue.toString()
-      );
+      if (newValue === ".") {
+        if (!value.includes(".")) {
+          setValue(value + ".");
+        }
+      } else if (isOperatorClicked) {
+        setValue(newValue.toString());
+        setIsOperatorClicked(false);
+      } else {
+        setValue(
+          value === "0" ? newValue.toString() : value + newValue.toString()
+        );
+      }
     }
   };
 
@@ -71,6 +75,7 @@ export default function Calculator() {
       memoryUse(item);
     }
   };
+
   const calculate = (num1, num2, op) => {
     let result;
     switch (op) {
@@ -92,6 +97,7 @@ export default function Calculator() {
     }
     setValue(result.toString());
   };
+
   const clearAll = () => {
     setValue(0);
     setOperator("");
@@ -103,11 +109,21 @@ export default function Calculator() {
   };
 
   const memoryUse = (v) => {
-    console.log(v);
+    if(v === "M+"){
+      setSavedNumber(savedNumber + parseFloat(value));
+      setSavedType("M")
+    } else if(v === "M-"){
+      setSavedNumber(savedNumber - parseFloat(value));
+    } else if (v === "MR"){
+      setValue(savedNumber);
+    } else if(v === "MC"){
+      setSavedNumber(0);
+    }
   };
+
   return (
     <div className="container">
-      <Screen equacao={value} saved={isSaved} />
+      <Screen equacao={value} saved={savedType} />
       <div className="grade">
         {buttonValues.map((item) => (
           <Botao
@@ -120,6 +136,7 @@ export default function Calculator() {
                 : () => {
                     updateDisplayValue(item);
                     operatorHandler(item);
+                    
                   }
             }
           />
