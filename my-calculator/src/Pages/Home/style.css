@@ -1,0 +1,16 @@
+.container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.grade {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(30px, 100px));
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+}
