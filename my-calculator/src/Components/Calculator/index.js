@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Botao from "../Botao";
+import Botao from "../Button";
 import Screen from "../Screen";
 import "./style.css";
 
@@ -28,16 +28,17 @@ export default function Calculator() {
     0,
     "=",
     "+",
-    "CE",
-    "C",
     "M+",
     "M-",
     "MR",
     "MC",
+    "CE",
+    "C",
+    "⌫"
   ];
 
   const updateDisplayValue = (newValue) => {
-    if (["MR", "MC", "M+", "M-"].includes(newValue)) {
+    if (["MR", "MC", "M+", "M-", "⌫"].includes(newValue)) {
       return null;
     } else {
       if (newValue === ".") {
@@ -47,7 +48,8 @@ export default function Calculator() {
       } else if (isOperatorClicked) {
         setValue(newValue.toString());
         setIsOperatorClicked(false);
-      } else {
+      } 
+      else {
         setValue(
           value === "0" ? newValue.toString() : value + newValue.toString()
         );
@@ -56,6 +58,7 @@ export default function Calculator() {
   };
 
   const setOperation = (operation) => {
+    console.log(operation);
     setIsOperatorClicked(true);
     setOperator(operation);
     setPrevValue(parseFloat(value));
@@ -73,41 +76,45 @@ export default function Calculator() {
       clearRecent();
     } else if (["MR", "MC", "M+", "M-"].includes(item)) {
       memoryUse(item);
+    } else if("⌫") {
+      deleteLast(item);
     }
   };
 
   const calculate = (num1, num2, op) => {
-    let result;
-    switch (op) {
-      case "+":
-        result = num2 + num1;
-        break;
-      case "-":
-        result = num2 - num1;
-        break;
-      case "*":
-        result = num2 * num1;
-        break;
-      case "/":
-        result = num2 / num1;
-        break;
-      default:
-        result = 0;
-        break;
-    }
-    setValue(result.toString());
-  };
+  let result;
+  switch (op) {
+    case "+":
+      result = num2 + num1
+      break;
+    case "-":
+      result = num2 - num1;
+      break;
+    case "*":
+      result = num2 * num1;
+      break;
+    case "/":
+      result = num2 / num1;
+      break;
+    default:
+      result = "0";
+      break;
+  }
+  setValue(result.toString());
+};
 
   const clearAll = () => {
-    setValue(0);
+    setValue("0");
     setOperator("");
-    setPrevValue(0);
+    setPrevValue("0");
   };
 
   const clearRecent = () => {
     setValue(0);
   };
-
+  const deleteLast = () => {
+    setValue(value.slice(0, -1))
+  }
   const memoryUse = (v) => {
     if(v === "M+"){
       setSavedNumber(savedNumber + parseFloat(value));
@@ -118,6 +125,7 @@ export default function Calculator() {
       setValue(savedNumber);
     } else if(v === "MC"){
       setSavedNumber(0);
+      setSavedType("");
     }
   };
 
@@ -127,6 +135,7 @@ export default function Calculator() {
       <div className="grade">
         {buttonValues.map((item) => (
           <Botao
+            key={item}
             displayNum={item}
             onClick={
               typeof item === "number"
@@ -135,8 +144,7 @@ export default function Calculator() {
                   }
                 : () => {
                     updateDisplayValue(item);
-                    operatorHandler(item);
-                    
+                    operatorHandler(item);         
                   }
             }
           />

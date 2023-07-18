@@ -1,0 +1,8 @@
+.calculatorButtons{
+    height: 50px;
+    background-color: #3b3b3b;
+    border: none;
+    color: white;
+    font-size: large;
+    border-radius: 15px;
+}
